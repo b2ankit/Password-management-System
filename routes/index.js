@@ -5,6 +5,8 @@ var userModule = require('../modules/user');
 
 var passcatModel = require('../modules/password_category');
 
+var passModel = require('../modules/add_password');
+
 var bcrypt = require('bcryptjs');
 
 var jwt = require('jsonwebtoken');
@@ -204,12 +206,30 @@ router.post('/add-new-category', checkLoginUser,[ check('passwordCategory','Ente
 
 router.get('/add-new-password', checkLoginUser, function(req, res, next) {
   var user = localStorage.getItem('loginUser');
-  res.render('add-new-password', { title: 'Add new Password',loginUser:user });
+  getPassCat.exec(function(err,data){
+    if(err) throw err;
+    res.render('add-new-password', { title: 'Add new Password',loginUser:user,records:data ,success:''});
+  })
+ 
 });
 
 router.post('/add-new-password', checkLoginUser, function(req, res, next) {
   var user = localStorage.getItem('loginUser');
-  res.render('add-new-password', { title: 'Add new Password',loginUser:user });
+
+  var pass_cat = req.body.pass_cat;
+  var pass_detail = req.body.pass_details;
+
+  var password_details =  new passModel({
+    password_category:pass_cat,
+    password_detail:pass_detail
+  });
+  password_details.save(function(err,doc){
+    getPassCat.exec(function(err,data){
+      if(err) throw err;
+      res.render('add-new-password', { title: 'Add new Password',loginUser:user,records:data,success:'password details successfully inserted' });
+  });
+  });
+ 
 });
 
 router.get('/view-all-password', checkLoginUser, function(req, res, next) {
