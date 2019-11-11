@@ -7,9 +7,11 @@ var passSchema = new mongoose.Schema({
     password_category:{
         type:String,
         required:true,
-        index:{
-            unique:true,
-        }},
+        },
+    project_name:{
+            type:String,
+            required:true,
+           },
     password_detail:{
             type:String,
             required:true,
